@@ -1,5 +1,7 @@
 package com.calinzbaenen;
 
+import java.io.IOException;
+
 // import org.jsoup.parser.ParseSettings;
 // import org.jsoup.parser.Parser;
 
@@ -20,20 +22,12 @@ import org.gnome.gtk.CssProvider;
 
 public class EnvisionApp {
 	        static       ApplicationWindow window = null;
+	        static final EnvisionAppMenus  menus  = new EnvisionAppMenus();
 	private static final Application       app    = new Application("com.calinzbaenen.Envision", ApplicationFlags.DEFAULT_FLAGS);
 	
 	public static void main(String[] args) {
 		EnvisionApp.app.onActivate(EnvisionApp::initialize);
 		EnvisionApp.app.run(args);
-		
-		try {
-			var stream = EnvisionApp.class.getResourceAsStream("app.css");
-			if(stream != null) System.out.println( new String(stream.readAllBytes()) );
-			else System.out.println("The resource app.css does not exist(?).");
-		} catch(Exception e) {
-			System.out.println("An error occurred.");
-			System.out.println(e);
-		}
 	}
 	
 	/**
@@ -41,11 +35,16 @@ public class EnvisionApp {
 	*/
 	private static void initialize() {
 		var applicationCss = new CssProvider();
-		applicationCss.loadFromResource("app.css");
+		try { applicationCss.loadFromString(new String( EnvisionApp.class.getResourceAsStream("/app.css").readAllBytes() )); }
+		catch(IOException e) { System.out.printf("error loading application's stylesheet: %s\n", e); }
+		catch(Exception e) { System.out.printf("an unexpected error occurred: %s\n", e); }
+		
+		EnvisionApp.menus.instantiate();
 		
 		EnvisionApp.window = new ApplicationWindow(app);
 		EnvisionApp.window.setDefaultSize(950, 525);
 		EnvisionApp.window.setTitlebar(Titlebar.instance);
+		EnvisionApp.window.setChild(EnvisionApp.menus.docView());
 		EnvisionApp.window.setTitle("Envision");
 		
 		Titlebar.instance.refreshSize();

@@ -1,5 +1,12 @@
 #envisionapp-titlebar {
-	background-color:white;
-	width:100%;
-	/* ... */
+	background-color:#FFFFFF;
+	color:#000000;
+}
+
+/* #envisionapp-titlebar > .button {} */
+
+#exit-button {
+	background-color:#A80000;
+	font-weight:bold;
+	color:#FFFFFF;
 }
